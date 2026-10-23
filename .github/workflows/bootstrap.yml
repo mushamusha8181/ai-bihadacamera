@@ -10,32 +10,27 @@ jobs:
   restore:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Restore source archive
+      - name: Restore source
         shell: bash
         run: |
           set -euo pipefail
-          cat .bootstrap/part00 .bootstrap/part01 .bootstrap/part02 .bootstrap/part03 .bootstrap/part04a > /tmp/aibeauty.b64
-          cat .bootstrap/part04hex0 .bootstrap/part04hex0z .bootstrap/part04hex1_* | tr -d '\n\r ' | xxd -r -p >> /tmp/aibeauty.b64
-          base64 -d /tmp/aibeauty.b64 > /tmp/aibeauty.zip
-          unzip -t /tmp/aibeauty.zip
-          rm -rf /tmp/aibeauty-unpack
-          mkdir -p /tmp/aibeauty-unpack
-          unzip -q /tmp/aibeauty.zip -d /tmp/aibeauty-unpack
-          cp -a /tmp/aibeauty-unpack/AIBeautyCamera/. .
+          cat .bootstrap/part00 .bootstrap/part01 .bootstrap/part02 .bootstrap/part03 .bootstrap/part04a > /tmp/a.b64
+          cat .bootstrap/part04h0_* .bootstrap/part04hex1_* | tr -d '\n\r ' | xxd -r -p >> /tmp/a.b64
+          base64 -d /tmp/a.b64 > /tmp/a.zip
+          unzip -t /tmp/a.zip
+          mkdir -p /tmp/a
+          unzip -q /tmp/a.zip -d /tmp/a
+          cp -a /tmp/a/AIBeautyCamera/. .
           rm -rf .bootstrap
           rm -f .github/workflows/bootstrap.yml
-
-      - name: Commit restored project
+      - name: Commit
         shell: bash
         run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
           git add -A
-          git commit -m "Import AI美肌カメラ v1.4.5 source"
+          git commit -m "Import AIBeautyCamera v1.4.5 source"
           git push origin HEAD:main
