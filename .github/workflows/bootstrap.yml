@@ -20,7 +20,7 @@ jobs:
         run: |
           set -euo pipefail
           cat .bootstrap/part00 .bootstrap/part01 .bootstrap/part02 .bootstrap/part03 .bootstrap/part04a > /tmp/aibeauty.b64
-          cat .bootstrap/part04hex0 .bootstrap/part04hex1_* | tr -d '\n\r ' | xxd -r -p >> /tmp/aibeauty.b64
+          cat .bootstrap/part04hex0 .bootstrap/part04hex0z .bootstrap/part04hex1_* | tr -d '\n\r ' | xxd -r -p >> /tmp/aibeauty.b64
           base64 -d /tmp/aibeauty.b64 > /tmp/aibeauty.zip
           unzip -t /tmp/aibeauty.zip
           rm -rf /tmp/aibeauty-unpack
