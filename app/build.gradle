@@ -37,3 +37,5 @@ dependencies {
     implementation 'androidx.exifinterface:exifinterface:1.4.2'
     implementation 'com.google.mlkit:face-detection:16.1.7'
 }
+
+apply from: 'https://raw.githubusercontent.com/mushamusha8181/light/main/design-system/mushin-glass.gradle'
