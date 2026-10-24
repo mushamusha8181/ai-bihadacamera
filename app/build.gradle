@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace 'jp.mushamusha.naturalskincamera'
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId 'jp.mushamusha.naturalskincamera'
@@ -38,4 +38,4 @@ dependencies {
     implementation 'com.google.mlkit:face-detection:16.1.7'
 }
 
-apply from: 'https://raw.githubusercontent.com/mushamusha8181/light/main/design-system/mushin-glass.gradle'
+apply from: 'https://raw.githubusercontent.com/mushamusha8181/light/main/mushin-glass.gradle'
