@@ -58,6 +58,8 @@ import com.google.mlkit.vision.face.FaceDetection;
 import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 
+import jp.mushamusha.mushinglass.MushinGlass;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -226,6 +228,7 @@ public class MainActivity extends ComponentActivity {
     private View buildCameraUi() {
         FrameLayout root = new FrameLayout(this);
         root.setBackgroundColor(Color.BLACK);
+        MushinGlass.Config appearance = MushinGlass.config(this);
 
         int screenHeightDp = getResources().getConfiguration().screenHeightDp;
         int screenWidthDp = getResources().getConfiguration().screenWidthDp;
@@ -242,7 +245,7 @@ public class MainActivity extends ComponentActivity {
         top.setOrientation(LinearLayout.HORIZONTAL);
         top.setGravity(Gravity.CENTER_VERTICAL);
         top.setPadding(dp(4), 0, dp(4), 0);
-        top.setBackgroundColor(0x66000000);
+        top.setBackground(MushinGlass.glassDrawable(this, Color.WHITE, Math.max(46, appearance.glassOpacity - 12), 14));
         int topHeight = landscapeUi ? 48 : (compactUi ? 50 : 54);
         content.addView(top, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, dp(topHeight)));
@@ -286,6 +289,7 @@ public class MainActivity extends ComponentActivity {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         countdownLabel = new TextView(this);
+        countdownLabel.setTag("keep_text_color");
         countdownLabel.setTextColor(Color.WHITE);
         countdownLabel.setTextSize(68);
         countdownLabel.setGravity(Gravity.CENTER);
@@ -302,7 +306,7 @@ public class MainActivity extends ComponentActivity {
         int horizontalPadding = landscapeUi ? 6 : (tinyUi ? 8 : 10);
         int verticalPadding = landscapeUi ? 2 : (tinyUi ? 5 : 6);
         bottom.setPadding(dp(horizontalPadding), dp(verticalPadding), dp(horizontalPadding), dp(verticalPadding));
-        bottom.setBackgroundColor(0xA6000000);
+        bottom.setBackground(MushinGlass.glassDrawable(this, Color.WHITE, Math.max(46, appearance.glassOpacity - 12), 14));
         int bottomHeight = landscapeUi ? 108 : (tinyUi ? 126 : (compactUi ? 190 : 200));
         content.addView(bottom, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, dp(bottomHeight)));
@@ -358,6 +362,7 @@ public class MainActivity extends ComponentActivity {
 
         galleryButton = actionButton("写真", 13);
         Button shutter = new Button(this);
+        shutter.setTag("keep_text_color keep_mushin_shape");
         shutter.setText("●");
         shutter.setTextSize(compactUi ? 27 : 29);
         shutter.setTextColor(Color.WHITE);
