@@ -1,0 +1,46 @@
+name: One-off MUSHIN camera controls
+
+on:
+  push:
+    paths:
+      - 'MUSHIN_CAMERA_UI_TRIGGER'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch camera chrome
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('app/src/main/java/jp/mushamusha/naturalskincamera/MainActivity.java')
+          s=p.read_text()
+          anchor='import com.google.mlkit.vision.face.FaceDetectorOptions;\n'
+          if 'import jp.mushamusha.mushinglass.MushinGlass;' not in s:
+              if anchor not in s: raise SystemExit('import anchor missing')
+              s=s.replace(anchor,anchor+'\nimport jp.mushamusha.mushinglass.MushinGlass;\n',1)
+          anchor='''        FrameLayout root = new FrameLayout(this);\n        root.setBackgroundColor(Color.BLACK);\n\n        int screenHeightDp'''
+          if anchor not in s: raise SystemExit('root anchor missing')
+          s=s.replace(anchor,'''        FrameLayout root = new FrameLayout(this);\n        root.setBackgroundColor(Color.BLACK);\n        MushinGlass.Config appearance = MushinGlass.config(this);\n\n        int screenHeightDp''',1)
+          if 'top.setBackgroundColor(0x66000000);' not in s: raise SystemExit('top background anchor missing')
+          s=s.replace('top.setBackgroundColor(0x66000000);','top.setBackground(MushinGlass.glassDrawable(this, Color.WHITE, Math.max(46, appearance.glassOpacity - 12), 14));',1)
+          if 'bottom.setBackgroundColor(0xA6000000);' not in s: raise SystemExit('bottom background anchor missing')
+          s=s.replace('bottom.setBackgroundColor(0xA6000000);','bottom.setBackground(MushinGlass.glassDrawable(this, Color.WHITE, Math.max(46, appearance.glassOpacity - 12), 14));',1)
+          anchor='''        countdownLabel = new TextView(this);\n        countdownLabel.setTextColor(Color.WHITE);'''
+          if anchor not in s: raise SystemExit('countdown anchor missing')
+          s=s.replace(anchor,'''        countdownLabel = new TextView(this);\n        countdownLabel.setTag("keep_text_color");\n        countdownLabel.setTextColor(Color.WHITE);''',1)
+          anchor='''        Button shutter = new Button(this);\n        shutter.setText("●");'''
+          if anchor not in s: raise SystemExit('shutter anchor missing')
+          s=s.replace(anchor,'''        Button shutter = new Button(this);\n        shutter.setTag("keep_text_color keep_mushin_shape");\n        shutter.setText("●");''',1)
+          p.write_text(s)
+          PY
+          rm -f MUSHIN_CAMERA_UI_TRIGGER .github/workflows/oneoff-mushin-camera-ui.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Apply MUSHIN Glass to camera controls safely'
+          git push
